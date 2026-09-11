@@ -388,3 +388,75 @@ body { overflow-x: hidden; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =====================================================================
+   Página de vendas
+   ===================================================================== */
+.secao {
+  font-size: 17px; font-weight: 800; letter-spacing: -0.01em;
+  color: var(--cor-700); text-align: center;
+  margin: 30px 0 14px;
+}
+
+/* Depoimentos: cartão com foto redonda à esquerda, como na referência. */
+.depo {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--card); border: 1px solid var(--linha);
+  border-radius: var(--raio); padding: 14px 15px; margin-bottom: 10px;
+  box-shadow: var(--sombra-card);
+}
+.depo-foto { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.depo-corpo { min-width: 0; }
+.estrelas { font-size: 11px; letter-spacing: 1.5px; color: #F5B301; display: block; }
+.depo-nome { margin: 2px 0 0; font-size: 13.5px; font-weight: 700; }
+.depo-data { margin: 0 0 6px; font-size: 11.5px; color: var(--texto-fraco); }
+.depo-texto { margin: 0; font-size: 13px; line-height: 1.55; color: var(--texto-suave); }
+
+/* Caixa de preço: faixa cheia em cima, "de" riscado à esquerda e o valor
+   com desconto num bloco à direita — mesma leitura da referência. */
+.preco {
+  border: 2px solid var(--cor-600);
+  border-radius: var(--raio);
+  overflow: hidden;
+  margin-bottom: 12px;
+  background: var(--card);
+}
+.preco-faixa {
+  background: var(--cor-600); color: #fff;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; text-align: center; padding: 6px 10px;
+}
+.preco-corpo {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 14px 16px;
+}
+.preco-de {
+  font-size: 19px; font-weight: 800; color: var(--vermelho);
+  text-decoration: line-through; text-decoration-thickness: 2px;
+}
+.preco-caixa {
+  background: #F1F1F5; border-radius: 10px; padding: 8px 14px;
+  text-align: center; line-height: 1.1;
+}
+.preco-off { display: block; font-size: 10.5px; font-weight: 700; color: var(--texto-fraco); }
+.preco-por { display: block; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; }
+.preco-condicao { display: block; font-size: 11px; color: var(--texto-suave); margin-top: 2px; }
+
+/* Lista do que a aluna recebe */
+.entrega { list-style: none; margin: 0 0 18px; padding: 0; }
+.entrega li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 11px 0; border-bottom: 1px solid var(--linha);
+  font-size: 13.5px; line-height: 1.5; color: var(--texto);
+}
+.entrega li:last-child { border-bottom: none; }
+.entrega .tick {
+  flex-shrink: 0; width: 19px; height: 19px; border-radius: 5px;
+  background: var(--verde); display: grid; place-items: center; margin-top: 1px;
+}
+.entrega .tick svg { width: 11px; height: 11px; }
+.entrega b { font-weight: 700; }
+.entrega u { text-decoration-color: var(--cor-400); text-underline-offset: 2px; }
+
+.bio { font-size: 13.5px; line-height: 1.6; color: var(--texto-suave); margin: 0 0 12px; }
+.bio b { color: var(--texto); font-weight: 700; }

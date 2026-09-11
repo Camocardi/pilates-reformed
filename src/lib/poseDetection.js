@@ -177,3 +177,74 @@ export function larguraNaAltura(mask, y, centroX, W, H) {
 
   return { x1: (e / mw) * W, x2: (d / mw) * W };
 }
+
+/**
+ * Pontos ao longo do CONTORNO da silhueta, entre as alturas `yIni` e `yFim`.
+ *
+ * Varre linha a linha e, em cada uma, pega TODOS os trechos contínuos de corpo
+ * — não só o mais largo. É essa diferença que faz o contorno acompanhar a parte
+ * de dentro das coxas: na altura das pernas existem dois trechos separados pelo
+ * vão, e pegar só o maior perderia as duas bordas internas.
+ *
+ * Trechos muito estreitos são descartados (dedo, mecha de cabelo, ruído da
+ * máscara), e cada linha contribui com no máximo dois pares pra nuvem não
+ * ficar densa demais no tronco e rala nas pernas.
+ */
+export function contornoDaSilhueta(mask, W, H, yIni, yFim, linhas = 26) {
+  if (!mask) return [];
+  const { data, width: mw, height: mh } = mask;
+
+  const pontos = [];
+  const minTrecho = Math.max(2, Math.round(mw * 0.04));
+  const passo = (yFim - yIni) / linhas;
+
+  for (let i = 0; i <= linhas; i++) {
+    const y = yIni + passo * i;
+    const my = Math.round((y / H) * mh);
+    if (my < 0 || my >= mh) continue;
+
+    const base = my * mw;
+    const trechos = [];
+    let inicio = -1;
+    for (let x = 0; x < mw; x++) {
+      const dentro = data[base + x] === 1;
+      if (dentro && inicio === -1) inicio = x;
+      if ((!dentro || x === mw - 1) && inicio !== -1) {
+        const fim = dentro ? x : x - 1;
+        if (fim - inicio >= minTrecho) trechos.push([inicio, fim]);
+        inicio = -1;
+      }
+    }
+    if (!trechos.length) continue;
+
+    // os dois maiores trechos da linha: tronco sozinho, ou as duas pernas
+    trechos.sort((a, b) => b[1] - b[0] - (a[1] - a[0]));
+    trechos.slice(0, 2).forEach(([e, d]) => {
+      pontos.push({ x: (e / mw) * W, y });
+      pontos.push({ x: (d / mw) * W, y });
+    });
+  }
+
+  return pontos;
+}
+
+/** Menor e maior altura em que a silhueta aparece, em coordenadas do canvas. */
+export function extremosVerticais(mask, W, H) {
+  if (!mask) return null;
+  const { data, width: mw, height: mh } = mask;
+  let topo = -1;
+  let base = -1;
+  for (let my = 0; my < mh; my++) {
+    const linha = my * mw;
+    let temCorpo = false;
+    for (let x = 0; x < mw; x += 2) {
+      if (data[linha + x]) { temCorpo = true; break; }
+    }
+    if (temCorpo) {
+      if (topo === -1) topo = my;
+      base = my;
+    }
+  }
+  if (topo === -1) return null;
+  return { topo: (topo / mh) * H, base: (base / mh) * H };
+}

@@ -1,10 +1,47 @@
-import { Titulo, Subtitulo, Botao, Tique } from "../components/Base.jsx";
+import { Botao, Tique, TituloForte } from "../components/Base.jsx";
 import { useQuiz } from "../state/QuizContext.jsx";
 import { montaAchados, COR_ACHADO } from "../lib/achados.js";
-import { IMG } from "../data/imagens.js";
+import { VENDAS } from "../data/vendas.jsx";
 
-const LINK_CHECKOUT = "#"; // trocar pela URL do checkout
+function Estrelas() {
+  return <span className="estrelas">★★★★★</span>;
+}
 
+function Preco() {
+  const p = VENDAS.precos;
+  return (
+    <div className="preco">
+      <div className="preco-faixa">{p.faixa}</div>
+      <div className="preco-corpo">
+        <span className="preco-de">{p.de}</span>
+        <div className="preco-caixa">
+          <span className="preco-off">{p.desconto}</span>
+          <span className="preco-por">{p.por}</span>
+          <span className="preco-condicao">{p.condicao}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Cta() {
+  return (
+    <Botao
+      onClick={() => {
+        window.location.href = VENDAS.checkout;
+      }}
+    >
+      {VENDAS.cta}
+    </Botao>
+  );
+}
+
+/**
+ * Página de vendas. Abre com o resultado da leitura corporal — que é o que
+ * a usuária acabou de "ganhar" e o motivo de ela ter chegado até aqui — e
+ * segue com a estrutura da página de referência: depoimentos, preço, o que
+ * ela recebe e quem é a professora, com o CTA repetido entre os blocos.
+ */
 export default function ResultadoStep() {
   const { dados, respostas } = useQuiz();
   const achados = montaAchados(dados.resultado, respostas);
@@ -14,14 +51,12 @@ export default function ResultadoStep() {
     <>
       <div style={{ height: 26 }} />
       <span className="selo">Leitura corporal concluída</span>
-      <Titulo>
-        O seu <em>protocolo</em> está pronto
-      </Titulo>
-      <Subtitulo>
+      <h1 className="titulo">O seu protocolo está pronto</h1>
+      <p className="subtitulo">
         {dados.resultado?.detectado
           ? "Foi isso que a leitura encontrou na sua foto:"
           : "Montamos a leitura a partir das suas respostas:"}
-      </Subtitulo>
+      </p>
 
       {foto && (
         <div className="resultado-foto">
@@ -39,56 +74,72 @@ export default function ResultadoStep() {
         </div>
       ))}
 
-      <div className="cartao" style={{ marginTop: 18, display: "flex", gap: 14, alignItems: "center" }}>
-        <img
-          src={IMG.lays}
-          alt="Lays"
-          style={{ width: 68, height: 68, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
-        />
-        <div>
-          <p style={{ margin: "0 0 3px", fontWeight: 700, fontSize: 15 }}>Quem conduz o desafio</p>
-          <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.5, color: "var(--texto-suave)" }}>
-            Aulas guiadas do começo ao fim, pensadas para quem tem dor e nunca fez pilates.
-          </p>
-        </div>
-      </div>
-
-      <div className="cartao">
-        <p style={{ margin: "0 0 10px", fontWeight: 700, fontSize: 15 }}>O que entra no seu protocolo</p>
-        <ul className="lista-check">
-          {[
-            "Sequência inicial montada a partir da sua leitura corporal",
-            "Exercícios seguros, sem impacto e sem equipamento",
-            "Poucos minutos por dia, feitos em casa",
-            "Progressão semana a semana, no seu ritmo",
-          ].map((t) => (
-            <li key={t}>
-              <span className="tick">
-                <Tique />
-              </span>
-              {t}
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="carrossel">
-        {[IMG.depoimentoVenda1, IMG.depoimentoVenda2, IMG.depoimentoVenda3].map((img, i) => (
-          <div className="carrossel-item" key={i}>
-            <div className="foto">
-              <img src={img} alt={`Resultado de aluna ${i + 1}`} loading="lazy" />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="espaco" />
-      <Botao onClick={() => { window.location.href = LINK_CHECKOUT; }}>
-        Quero começar o desafio
-      </Botao>
-      <p className="nota-privacidade">
+      <p className="nota-privacidade" style={{ marginBottom: 22 }}>
         A sua foto não foi enviada para lugar nenhum: a leitura rodou dentro do seu aparelho.
       </p>
+
+      {/* ── Oferta ─────────────────────────────────────────────── */}
+      <TituloForte>
+        {VENDAS.chamada} <span className="marca">{VENDAS.chamadaDestaque}</span>
+      </TituloForte>
+
+      <div style={{ marginTop: 18 }}>
+        <Cta />
+      </div>
+
+      {/* ── Depoimentos ────────────────────────────────────────── */}
+      <h2 className="secao">{VENDAS.tituloDepoimentos}</h2>
+      {VENDAS.depoimentos.map((d) => (
+        <div className="depo" key={d.nome}>
+          <img className="depo-foto" src={d.img} alt={d.nome} loading="lazy" />
+          <div className="depo-corpo">
+            <Estrelas />
+            <p className="depo-nome">{d.nome}</p>
+            <p className="depo-data">{d.data}</p>
+            <p className="depo-texto">{d.texto}</p>
+          </div>
+        </div>
+      ))}
+
+      <div style={{ marginTop: 18 }}>
+        <Preco />
+        <Cta />
+      </div>
+
+      {/* ── O que recebe ───────────────────────────────────────── */}
+      <h2 className="secao">{VENDAS.tituloEntrega}</h2>
+      <div className="imagem-bloco" style={{ background: "transparent" }}>
+        <img src={VENDAS.imagemEntrega} alt="Aulas no computador e no celular" loading="lazy" />
+      </div>
+      <ul className="entrega">
+        {VENDAS.entregaveis.map((item, i) => (
+          <li key={i}>
+            <span className="tick">
+              <Tique />
+            </span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+      <Cta />
+
+      {/* ── Professora ─────────────────────────────────────────── */}
+      <h2 className="secao">{VENDAS.tituloProfessora}</h2>
+      <div className="imagem-bloco">
+        <img src={VENDAS.fotoProfessora} alt="Lays Trancoso" loading="lazy" />
+      </div>
+      {VENDAS.bio.map((p, i) => (
+        <p className="bio" key={i}>
+          {p}
+        </p>
+      ))}
+
+      <div style={{ marginTop: 18 }}>
+        <Preco />
+        <Cta />
+      </div>
+
+      <div style={{ height: 10 }} />
     </>
   );
 }

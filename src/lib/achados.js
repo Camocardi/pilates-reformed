@@ -49,7 +49,7 @@ export function montaAchados(resultado, respostas = {}) {
     ];
   }
 
-  const { largOmbros, largQuadril, largCintura, largBarriga } = medidas;
+  const { largOmbros, largQuadril, largCintura, largBarriga, largCoxa } = medidas;
   const cinturaQuadril = largCintura / largQuadril;
   const barrigaCintura = largBarriga / largCintura;
   const ombroCintura = largOmbros / largCintura;
@@ -88,6 +88,18 @@ export function montaAchados(resultado, respostas = {}) {
           : "O traçado do braço serve de referência de progresso: é onde a firmeza costuma aparecer primeiro.",
     },
   ];
+
+  if (largCoxa) {
+    const coxaQuadril = largCoxa / largQuadril;
+    achados.push({
+      chave: "coxa",
+      titulo: LINHA_ROTULO.coxa,
+      texto:
+        coxaQuadril > 0.62
+          ? "A coxa aparece cheia em relação ao quadril — é onde o corpo guarda mais reserva depois dos 40. Responde bem a trabalho de solo, sem impacto no joelho."
+          : "A proporção entre coxa e quadril está equilibrada. Aqui o trabalho é de firmeza e sustentação, para o joelho não pagar a conta.",
+    });
+  }
 
   if (ombroCintura < 1.15) {
     achados.push({

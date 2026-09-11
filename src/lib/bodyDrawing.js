@@ -1,4 +1,10 @@
-import { detectPose, segmentBody, larguraNaAltura } from "./poseDetection.js";
+import {
+  detectPose,
+  segmentBody,
+  larguraNaAltura,
+  contornoDaSilhueta,
+  extremosVerticais,
+} from "./poseDetection.js";
 
 // Índices do PoseLandmarker que interessam aqui (dos 33 disponíveis)
 const LM = {
@@ -9,6 +15,8 @@ const LM = {
   COTOVELO_E: 13, COTOVELO_D: 14,
   PUNHO_E: 15, PUNHO_D: 16,
   QUADRIL_E: 23, QUADRIL_D: 24,
+  JOELHO_E: 25, JOELHO_D: 26,
+  TORNOZELO_E: 27, TORNOZELO_D: 28,
 };
 
 // Tons da mesma família, separados por luminosidade em vez de matiz:
@@ -16,17 +24,22 @@ const LM = {
 export const LINHA_COR = {
   cintura: "#FFFFFF",
   barriga: "#C4B5FD",
+  coxa: "#A78BFA",
   braco: "#8B5CF6",
   papada: "#DDD6FE",
 };
-export const LINHA_ESPESSURA = { cintura: 4, barriga: 3.6, braco: 3.2, papada: 2.8 };
-export const LINHA_ORDEM = ["cintura", "barriga", "braco", "papada"];
+export const LINHA_ESPESSURA = { cintura: 4, barriga: 3.6, coxa: 3.4, braco: 3.2, papada: 2.8 };
+export const LINHA_ORDEM = ["cintura", "barriga", "coxa", "braco", "papada"];
 export const LINHA_ROTULO = {
   cintura: "Cintura",
   barriga: "Abdômen",
+  coxa: "Coxa",
   braco: "Braço",
   papada: "Linha do queixo",
 };
+
+// cor dos pontos que contornam o corpo
+export const COR_CONTORNO = "#F472B6";
 
 // retrato 2:3 — foto de corpo inteiro é alta, e um recorte quadrado obrigaria
 // a tela do scan a dar zoom demais pra cobrir o celular, cortando pés e cabeça
@@ -137,6 +150,12 @@ function pontosDosLandmarks(lm, mask) {
     barriga = estimada(0.88);
   }
 
+  // Coxa: medida a 38% do caminho quadril -> joelho, que é onde ela é mais
+  // cheia. Mede numa perna só (a do lado escolhido pro braço), porque uma fita
+  // atravessando as duas leria como "quadril", não como coxa.
+  const joelhoE = lm[LM.JOELHO_E];
+  const joelhoD = lm[LM.JOELHO_D];
+
   // braço mais visível dos dois — numa foto de frente costuma haver um lado
   // melhor iluminado ou menos encoberto pelo tronco
   const vis = (i) => lm[i]?.visibility ?? 1;
@@ -146,6 +165,20 @@ function pontosDosLandmarks(lm, mask) {
   const ombro = usarE ? lm[LM.OMBRO_E] : lm[LM.OMBRO_D];
   const cotovelo = usarE ? lm[LM.COTOVELO_E] : lm[LM.COTOVELO_D];
   const punho = usarE ? lm[LM.PUNHO_E] : lm[LM.PUNHO_D];
+
+  const quadrilLado = usarE ? quadrilE : quadrilD;
+  const joelhoLado = usarE ? joelhoE : joelhoD;
+  const centroCoxa = lerpP(quadrilLado, joelhoLado, 0.38);
+  const medidaCoxa = larguraNaAltura(mask, centroCoxa.y, centroCoxa.x, W, H);
+  const largCoxaEstimada = dist(quadrilE, quadrilD) * 0.78;
+  const coxa =
+    medidaCoxa && medidaCoxa.x2 - medidaCoxa.x1 < largQuadril * 1.6
+      ? { x1: medidaCoxa.x1, x2: medidaCoxa.x2, y: centroCoxa.y }
+      : {
+          x1: centroCoxa.x - largCoxaEstimada / 2,
+          x2: centroCoxa.x + largCoxaEstimada / 2,
+          y: centroCoxa.y,
+        };
 
   // Linha do queixo: de orelha a orelha, mergulhando abaixo do queixo.
   // A altura do queixo sai do TAMANHO DA CABEÇA (distância entre as orelhas),
@@ -176,9 +209,23 @@ function pontosDosLandmarks(lm, mask) {
   const ancoraE = lerpP(orelhaE, queixo, 0.18);
   const ancoraD = lerpP(orelhaD, queixo, 0.18);
 
+  // Contorno: pontos acompanhando a borda do corpo, do pescoço aos pés.
+  // Começa abaixo do queixo pra não disputar com a linha da mandíbula.
+  const extremos = extremosVerticais(mask, W, H);
+  const inicioContorno = queixo.y + larguraCabeca * 0.25;
+  const fimContorno = extremos
+    ? extremos.base
+    : Math.max(lm[LM.TORNOZELO_E]?.y || 0, lm[LM.TORNOZELO_D]?.y || 0) || H * 0.95;
+  const contorno =
+    fimContorno > inicioContorno
+      ? contornoDaSilhueta(mask, W, H, inicioContorno, fimContorno, 24)
+      : [];
+
   return {
+    contorno,
     cintura: fita(cintura.x1, cintura.x2, cintura.y),
     barriga: fita(barriga.x1, barriga.x2, barriga.y, 0.06),
+    coxa: fita(coxa.x1, coxa.x2, coxa.y, 0.07, 4),
     braco: [ombro, cotovelo, cotovelo, punho].map((p) => ({ x: p.x, y: p.y })),
     papada: [
       ancoraE,
@@ -201,6 +248,7 @@ function pontosDosLandmarks(lm, mask) {
       largQuadril: largQuadril * FATOR_QUADRIL,
       largCintura: cintura.x2 - cintura.x1,
       largBarriga: barriga.x2 - barriga.x1,
+      largCoxa: coxa.x2 - coxa.x1,
       medidoNaSilhueta: naFaixaCintura.length >= 3,
     },
   };
@@ -209,8 +257,10 @@ function pontosDosLandmarks(lm, mask) {
 /** Traçado genérico, em frações da tela, quando nenhum corpo foi detectado. */
 function pontosGenericos(W, H) {
   return {
+    contorno: [],
     cintura: fita(W * 0.29, W * 0.71, H * 0.47),
     barriga: fita(W * 0.27, W * 0.73, H * 0.56, 0.06),
+    coxa: fita(W * 0.34, W * 0.48, H * 0.68, 0.07, 4),
     braco: [
       { x: W * 0.31, y: H * 0.3 },
       { x: W * 0.24, y: H * 0.42 },
@@ -256,6 +306,19 @@ export function amostraBezier(p, n = 6) {
 
 export function desenhaNoCanvas(ctx, pts) {
   ctx.save();
+
+  // contorno primeiro, pra as linhas de medição ficarem por cima
+  if (pts.contorno?.length) {
+    ctx.fillStyle = COR_CONTORNO;
+    ctx.shadowColor = COR_CONTORNO;
+    ctx.shadowBlur = 6;
+    pts.contorno.forEach((p) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3.4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
   ctx.lineCap = "round";
   ctx.shadowBlur = 6;
   LINHA_ORDEM.forEach((chave) => {

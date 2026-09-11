@@ -7,6 +7,7 @@ import {
   LINHA_COR,
   LINHA_ESPESSURA,
   LINHA_ORDEM,
+  COR_CONTORNO,
   CANVAS,
 } from "../lib/bodyDrawing.js";
 
@@ -21,12 +22,15 @@ const ATRASO_LINHA_PASSO = TOTAL_MS * 0.09;
 const ATRASO_MARCO_BASE = TOTAL_MS * 0.16;
 const ATRASO_MARCO_PASSO = TOTAL_MS * 0.025;
 
+// as legendas acompanham o que está aparecendo na tela naquele instante:
+// primeiro o contorno acende, depois as fitas de medição, uma a uma
 const LEGENDAS = [
-  [0, "Localizando os pontos do seu corpo…"],
-  [16, "Medindo a silhueta…"],
-  [36, "Marcando a linha da cintura…"],
-  [56, "Avaliando a região abdominal…"],
-  [76, "Cruzando com as suas respostas…"],
+  [0, "Localizando você na foto…"],
+  [12, "Contornando a sua silhueta…"],
+  [32, "Marcando a linha da cintura…"],
+  [48, "Avaliando a região abdominal…"],
+  [62, "Medindo coxas e pernas…"],
+  [78, "Cruzando com as suas respostas…"],
   [90, "Montando o seu protocolo…"],
 ];
 
@@ -123,6 +127,20 @@ export default function ScanStep() {
 
           {pontos && (
             <>
+              {/* contorno do corpo: os pontos acendem de cima pra baixo, no
+                  mesmo sentido do feixe, então lê como o scanner passando */}
+              {(pontos.contorno || []).map((p, i) => (
+                <circle
+                  key={`c-${i}`}
+                  className="linha-ponto"
+                  cx={p.x}
+                  cy={p.y}
+                  r={3.2}
+                  fill={COR_CONTORNO}
+                  style={{ animationDelay: `${600 + i * 34}ms` }}
+                />
+              ))}
+
               {LINHA_ORDEM.map((chave, i) => {
                 const atraso = ATRASO_LINHA_BASE + i * ATRASO_LINHA_PASSO;
                 return amostraBezier(pontos[chave], 6).map((p, j) => (
