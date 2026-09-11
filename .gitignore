@@ -1,0 +1,18 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+.vercel
+
+# Editor / SO
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db
+
+# A VSL antiga: 25 MB, e não é usada por nada — o scan corporal entrou no
+# lugar dela. Fica de fora porque arquivo grande commitado nunca mais sai do
+# histórico do Git sem reescrever tudo. O arquivo continua no seu disco.
+src/assets/mini vsl.mp4

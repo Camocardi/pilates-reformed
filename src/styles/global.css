@@ -1,0 +1,390 @@
+/* =====================================================================
+   Paleta — uma cor só.
+   Roxo do começo ao fim, variando apenas em luminosidade. Sem degradê em
+   lugar nenhum: botão, barra, seleção e destaque usam a MESMA cor chapada.
+   Pra trocar o funil inteiro pra rosa, basta reescrever os cinco tons
+   abaixo (ex.: 600 -> #DB2777, 700 -> #BE185D, 400 -> #F9A8D4,
+   200 -> #FBCFE8, 50 -> #FDF2F8). Nada mais no arquivo depende do tom.
+   ===================================================================== */
+:root {
+  --cor-900: #2E1065;
+  --cor-800: #4C1D95;
+  --cor-700: #5B21B6;
+  --cor-600: #6D28D9;
+  --cor-400: #A78BFA;
+  --cor-200: #DDD6FE;
+  --cor-100: #EDE9FE;
+  --cor-50:  #F5F3FF;
+
+  /* neutros sem tingimento: texto levemente arroxeado é outro vício de
+     layout gerado — aqui o cinza é cinza */
+  --bg: #F7F7FA;
+  --card: #FFFFFF;
+  --linha: #E6E6EC;
+  --texto: #17171C;
+  --texto-suave: #61616B;
+  --texto-fraco: #9A9AA4;
+
+  --verde: #16A34A;
+  --verde-bg: #F0FDF4;
+  --verde-borda: #BBF7D0;
+  --verde-texto: #15803D;
+  --vermelho: #DC2626;
+  --vermelho-bg: #FEF2F2;
+  --vermelho-borda: #FECACA;
+
+  --sombra-card: 0 1px 2px rgba(23, 23, 28, 0.05);
+  --sombra-alta: 0 10px 30px rgba(23, 23, 28, 0.12);
+
+  --raio: 14px;
+  --raio-g: 20px;
+  --largura: 440px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--texto);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+body { overflow-x: hidden; }
+
+/* =====================================================================
+   Estrutura
+   ===================================================================== */
+.app {
+  max-width: var(--largura);
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 18px 34px;
+}
+
+.tela { display: flex; flex-direction: column; flex: 1; animation: entra 0.32s ease both; }
+@keyframes entra { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.espaco { flex: 1; min-height: 20px; }
+
+/* Topo: só a barra, encaixada na coluna com respiro. */
+.topo { padding: 18px 0 6px; }
+
+.barra { height: 6px; border-radius: 99px; background: var(--cor-100); overflow: hidden; }
+.barra i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: var(--cor-600);
+  transition: width 0.45s ease;
+}
+
+.topo-voltar {
+  width: 34px; height: 34px; margin: 8px 0 -4px -8px;
+  display: grid; place-items: center;
+  border: none; background: transparent; color: var(--texto-fraco);
+  font-size: 18px; cursor: pointer; border-radius: 50%;
+  transition: background 0.15s, color 0.15s;
+}
+.topo-voltar:active { background: var(--cor-50); color: var(--cor-600); }
+
+/* =====================================================================
+   Tipografia — Inter só, como o funil de referência. Serifa decorativa
+   misturada com caixa alta é mais um sinal de layout montado no automático.
+   ===================================================================== */
+.titulo {
+  font-size: 21px; line-height: 1.3; font-weight: 800;
+  letter-spacing: -0.02em; margin: 0 0 10px; text-align: center;
+}
+.titulo-esq { text-align: left; }
+.subtitulo { font-size: 14px; line-height: 1.5; color: var(--texto-suave); margin: 0 0 18px; text-align: center; }
+.subtitulo-esq { text-align: left; }
+
+.titulo-forte {
+  font-size: 19px; line-height: 1.28; font-weight: 800;
+  letter-spacing: -0.01em; text-align: center; text-transform: uppercase;
+  color: var(--cor-700); margin: 0 0 8px;
+}
+
+/* Marca-texto: faixa chapada por trás da frase. Sem inclinação, sem
+   degradê — é um destaque, não um efeito. */
+.marca {
+  background: var(--cor-100);
+  padding: 1px 5px;
+  border-radius: 3px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.marca-forte {
+  background: var(--cor-600);
+  color: #fff;
+  padding: 4px 9px;
+  border-radius: 5px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.selo {
+  display: inline-block; align-self: center;
+  padding: 5px 12px; border-radius: 99px;
+  background: var(--cor-50); border: 1px solid var(--cor-200);
+  color: var(--cor-700); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 12px;
+}
+
+/* =====================================================================
+   Opções
+   ===================================================================== */
+.opcoes { display: flex; flex-direction: column; gap: 9px; }
+.opcoes-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.opcoes-grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+
+.opcao {
+  position: relative; display: flex; align-items: center; gap: 11px;
+  width: 100%; padding: 14px 15px;
+  border: 1.5px solid var(--linha); border-radius: var(--raio);
+  background: var(--card); box-shadow: var(--sombra-card);
+  font-family: inherit; font-size: 14.5px; font-weight: 500;
+  color: var(--texto); text-align: left; cursor: pointer; overflow: hidden;
+  transition: border-color 0.15s, background 0.15s, transform 0.12s;
+  animation: sobe 0.3s ease both;
+  animation-delay: calc(var(--i,0) * 40ms);
+}
+@keyframes sobe { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.opcao:active { transform: scale(0.988); }
+.opcao:hover { border-color: var(--cor-200); }
+
+.opcao.marcada { border-color: var(--cor-600); background: var(--cor-50); }
+
+.opcao-marca {
+  flex-shrink: 0; width: 21px; height: 21px; border-radius: 50%;
+  border: 2px solid #D4D4DC; display: grid; place-items: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+.opcao.marcada .opcao-marca { border-color: var(--cor-600); background: var(--cor-600); }
+.opcao-marca svg { width: 11px; height: 11px; opacity: 0; }
+.opcao.marcada .opcao-marca svg { opacity: 1; }
+
+.opcao-emoji { font-size: 23px; flex-shrink: 0; line-height: 1; }
+.opcao-texto { flex: 1; line-height: 1.38; }
+.opcao-texto b { font-weight: 700; }
+.opcao-texto u { text-decoration-color: var(--cor-400); text-underline-offset: 2px; }
+
+/* Cartão cheio: só a primeira tela usa. */
+.opcao-cheia {
+  background: var(--cor-600);
+  border-color: var(--cor-600);
+  color: #fff;
+  font-weight: 600; font-size: 15px;
+  padding: 16px 17px;
+}
+.opcao-cheia .opcao-marca { border-color: rgba(255,255,255,0.65); }
+.opcao-cheia.marcada { background: var(--cor-700); border-color: var(--cor-700); }
+.opcao-cheia.marcada .opcao-marca { background: #fff; border-color: #fff; }
+.opcao-cheia.marcada .opcao-marca svg path { stroke: var(--cor-600); }
+
+/* Opção com miniatura à direita (classificação do corpo) */
+.opcao-thumb { padding: 0 0 0 15px; gap: 8px; }
+.opcao-thumb .opcao-texto { padding: 13px 0; font-size: 14px; }
+.opcao-thumb .thumb { flex-shrink: 0; width: 64px; align-self: stretch; background: var(--cor-50); overflow: hidden; }
+.opcao-thumb .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Cartão vertical com imagem em cima (corpo desejado) */
+.opcao-img { flex-direction: column; gap: 0; padding: 0; align-items: stretch; }
+.opcao-img .moldura { aspect-ratio: 3/4; background: var(--cor-50); overflow: hidden; }
+.opcao-img .moldura img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.opcao-img .rodape { display: flex; align-items: center; gap: 7px; padding: 10px 9px; }
+.opcao-img .rodape .opcao-texto { font-size: 12.5px; font-weight: 600; line-height: 1.25; }
+.opcao-img .rodape .opcao-marca { width: 17px; height: 17px; }
+.opcao-img .rodape .opcao-marca svg { width: 9px; height: 9px; }
+
+/* =====================================================================
+   Botões — cor chapada, sem brilho e sem pulsar.
+   ===================================================================== */
+.botao {
+  width: 100%; padding: 17px 20px; border: none; border-radius: 99px;
+  background: var(--cor-600); color: #fff; font-family: inherit;
+  font-size: 14.5px; font-weight: 700; letter-spacing: 0.02em;
+  text-transform: uppercase; cursor: pointer;
+  transition: background 0.15s, transform 0.12s, opacity 0.15s;
+}
+.botao:active { background: var(--cor-700); transform: scale(0.98); }
+.botao:disabled { opacity: 0.35; cursor: default; }
+
+.botao-linha {
+  width: 100%; padding: 15px 20px; border: 1.5px solid var(--cor-200);
+  border-radius: 99px; background: transparent; color: var(--cor-700);
+  font-family: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer;
+  transition: background 0.15s, transform 0.12s;
+}
+.botao-linha:active { background: var(--cor-50); transform: scale(0.98); }
+
+.botao-texto {
+  display: block; width: 100%; margin-top: 12px; padding: 6px;
+  border: none; background: none; color: var(--texto-suave);
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+.dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* =====================================================================
+   Blocos
+   ===================================================================== */
+.cartao {
+  background: var(--card); border: 1px solid var(--linha);
+  border-radius: var(--raio-g); padding: 18px;
+  box-shadow: var(--sombra-card); margin-bottom: 12px;
+}
+
+.aviso { padding: 14px 16px; border-radius: var(--raio); font-size: 13px; line-height: 1.5; margin-bottom: 13px; }
+.aviso-roxo { background: var(--cor-50); border: 1px solid var(--cor-200); color: var(--cor-800); font-weight: 600; text-align: center; }
+.aviso-verde { background: var(--verde-bg); border: 1px solid var(--verde-borda); color: var(--verde-texto); font-weight: 700; text-align: center; text-transform: uppercase; font-size: 12.5px; line-height: 1.45; }
+.aviso-vermelho { background: var(--vermelho-bg); border: 1px solid var(--vermelho-borda); color: #991B1B; text-align: center; }
+
+.imagem-bloco {
+  width: 100%; border-radius: var(--raio-g); overflow: hidden;
+  background: var(--cor-50); margin-bottom: 14px;
+}
+.imagem-bloco img { width: 100%; display: block; }
+
+.lista-check { list-style: none; margin: 0; padding: 0; }
+.lista-check li {
+  display: flex; align-items: center; gap: 10px; padding: 11px 0;
+  border-bottom: 1px solid var(--linha);
+  font-size: 13.5px; line-height: 1.4; font-weight: 700; text-transform: uppercase;
+}
+.lista-check li:last-child { border-bottom: none; }
+.lista-check .tick {
+  flex-shrink: 0; width: 20px; height: 20px; border-radius: 5px;
+  background: var(--verde); display: grid; place-items: center;
+}
+.lista-check .tick svg { width: 11px; height: 11px; }
+
+.fato { font-size: 14px; line-height: 1.6; padding: 11px 0; border-bottom: 1px solid var(--linha); }
+.fato:last-of-type { border-bottom: none; }
+
+.nota { font-size: 12.5px; line-height: 1.5; color: var(--texto-suave); text-align: center; margin: 12px 0 0; }
+.nota-privacidade { font-size: 11.5px; line-height: 1.5; color: var(--texto-fraco); text-align: center; margin: 13px 0 0; }
+
+/* =====================================================================
+   Carrossel
+   ===================================================================== */
+.carrossel {
+  display: flex; gap: 10px; overflow-x: auto;
+  scroll-snap-type: x mandatory; scrollbar-width: none;
+  margin: 0 -18px 10px; padding: 4px 18px;
+}
+.carrossel::-webkit-scrollbar { display: none; }
+.carrossel-item {
+  flex: 0 0 82%; scroll-snap-align: center;
+  border-radius: var(--raio-g); overflow: hidden;
+  background: var(--card); border: 1px solid var(--linha); box-shadow: var(--sombra-card);
+}
+.carrossel-item .foto { background: var(--cor-50); }
+.carrossel-item .foto img { width: 100%; display: block; }
+.carrossel-item .legenda { padding: 10px 14px; font-size: 13px; font-weight: 600; text-align: center; color: var(--texto-suave); }
+
+.pontos { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
+.pontos span { width: 6px; height: 6px; border-radius: 50%; background: var(--cor-200); transition: background 0.2s, width 0.2s; }
+.pontos span.on { width: 18px; border-radius: 99px; background: var(--cor-600); }
+
+/* =====================================================================
+   Loading — vai de 0 a 100%.
+   ===================================================================== */
+.loading { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 26px 0; }
+.anel { position: relative; width: 138px; height: 138px; }
+.anel svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.anel .trilha { stroke: var(--cor-100); }
+.anel .prog { stroke: var(--cor-600); stroke-linecap: round; transition: stroke-dashoffset 0.2s linear; }
+.anel .pct {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: 28px; font-weight: 800; letter-spacing: -0.02em;
+  color: var(--texto); font-variant-numeric: tabular-nums;
+}
+.loading-label { font-size: 15.5px; font-weight: 700; text-align: center; margin: 0; }
+.loading-sub { font-size: 13px; color: var(--texto-suave); text-align: center; margin: -10px 0 0; min-height: 19px; }
+
+/* =====================================================================
+   Gráfico
+   O único degradê que ficou no funil está aqui, e por um motivo: ele
+   codifica um eixo de valor (alta -> baixa hormonal), igual ao gráfico do
+   funil de referência. Não é decoração, é a legenda da escala.
+   ===================================================================== */
+.gr-linha { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: desenha 1.3s ease forwards 0.2s; }
+@keyframes desenha { to { stroke-dashoffset: 0; } }
+.gr-ponto { opacity: 0; animation: aparece 0.3s ease forwards 1.4s; }
+@keyframes aparece { to { opacity: 1; } }
+.gr-eixo { display: flex; justify-content: space-between; font-size: 11px; color: var(--texto-fraco); margin-top: 4px; }
+
+/* =====================================================================
+   Captura e scan
+   ===================================================================== */
+.silhueta { width: 186px; margin: 6px auto 2px; display: block; }
+.silhueta .pisca { animation: tracado 3s ease-in-out infinite; }
+@keyframes tracado { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+.marcador {
+  position: absolute; display: flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 99px;
+  background: #fff; border: 1px solid var(--linha);
+  box-shadow: var(--sombra-card); font-size: 11px; font-weight: 600;
+  color: var(--cor-800); white-space: nowrap;
+}
+.entrada-oculta { display: none; }
+
+.camera-caixa {
+  position: relative; width: 100%; aspect-ratio: 3/4;
+  border-radius: var(--raio-g); overflow: hidden; background: #17171C; margin-bottom: 14px;
+}
+.camera-caixa video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.erro-texto { font-size: 12.5px; color: var(--vermelho); text-align: center; margin: 10px 0 0; }
+
+.scan { position: fixed; inset: 0; z-index: 40; background: var(--cor-900); display: flex; flex-direction: column; }
+.scan-foto { position: relative; flex: 1; overflow: hidden; }
+.scan-svg { width: 100%; height: 100%; display: block; }
+.scan-veu { position: absolute; inset: 0; background: rgba(46,16,101,0.34); pointer-events: none; }
+/* a faixa de luz do scanner é a única coisa que precisa de esmaecimento nas
+   pontas pra parecer um feixe, e não uma barra deslizando */
+.scan-feixe {
+  position: absolute; left: 0; right: 0; height: 120px;
+  background: linear-gradient(180deg, transparent, rgba(167,139,250,0.4), transparent);
+  animation: varre 2.6s ease-in-out infinite; pointer-events: none;
+}
+@keyframes varre { 0% { transform: translateY(-130px); } 100% { transform: translateY(100dvh); } }
+.scan-painel { padding: 22px 24px calc(30px + env(safe-area-inset-bottom)); background: var(--cor-900); color: #fff; text-align: center; }
+.scan-pct { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-bottom: 10px; }
+.scan-trilha { height: 6px; border-radius: 99px; background: rgba(255,255,255,0.16); overflow: hidden; }
+.scan-fill { height: 100%; border-radius: 99px; background: var(--cor-400); }
+.scan-legenda { font-size: 13.5px; color: #CFC4EA; margin: 12px 0 0; min-height: 20px; }
+
+.linha-ponto { opacity: 0; animation: aparece 0.3s ease forwards; }
+.linha-desenha { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: desenha 1s ease forwards; }
+.marco-ponto { opacity: 0; animation: aparece 0.25s ease forwards; }
+
+/* =====================================================================
+   Resultado
+   ===================================================================== */
+.resultado-foto { width: 100%; border-radius: var(--raio-g); overflow: hidden; box-shadow: var(--sombra-alta); margin-bottom: 16px; background: var(--cor-900); }
+.resultado-foto img { width: 100%; display: block; }
+
+.achado {
+  display: flex; gap: 12px; padding: 14px 15px; border-radius: var(--raio);
+  background: var(--card); border: 1px solid var(--linha);
+  box-shadow: var(--sombra-card); margin-bottom: 9px;
+  animation: sobe 0.4s ease both;
+  animation-delay: calc(var(--i,0) * 100ms);
+}
+.achado-cor { flex-shrink: 0; width: 4px; border-radius: 99px; align-self: stretch; }
+.achado h3 { margin: 0 0 3px; font-size: 14.5px; font-weight: 700; }
+.achado p { margin: 0; font-size: 13px; line-height: 1.55; color: var(--texto-suave); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
