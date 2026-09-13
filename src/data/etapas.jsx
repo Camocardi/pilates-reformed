@@ -115,12 +115,12 @@ export const ETAPAS = [
     id: "prova-social",
     tipo: "info",
     progresso: 22,
-    tituloForte: "Sua meta é super possível de alcançar, em menos tempo que você imagina.",
+    titulo: "Sua meta é super possível de alcançar, em menos tempo que você imagina.",
     link: "Já ajudamos mais de 20 mil mulheres após os 50 anos",
     carrossel: [
       { img: IMG.carrossel1, legenda: "59 anos" },
-      { img: IMG.carrossel2, legenda: "" },
-      { img: IMG.carrossel3, legenda: "" },
+      { img: IMG.carrossel2, legenda: "58 anos" },
+      { img: IMG.carrossel3, legenda: "64 anos" },
     ],
     botao: "CONTINUAR TESTE GRATUITO",
     nota: "Na próxima etapa você irá descobrir a causa das suas dores e da dificuldade de emagrecer",
@@ -415,6 +415,4 @@ export const ETAPAS = [
      - etapa 18, lista: "MELHOR AS DORES"  (provável "MELHORA AS DORES")
      - etapa 21, título: "poucos minutos por dias"  (provável "por dia")
      - etapa 12, fato 2: "2-Seus hormônios" sem espaço depois do traço
-   As legendas 2 e 3 do carrossel da etapa 5 estão vazias: o documento só
-   mostrava a idade do primeiro slide ("59 anos").
    ───────────────────────────────────────────────────────────────────── */

@@ -18,7 +18,7 @@ export function Tique({ cor = "#fff" }) {
  * usuária quanto trabalho ela ainda tem, e a marca não ajuda em nada no meio
  * de um quiz que ela já começou.
  */
-export function Topo({ voltar = true }) {
+export function Topo({ voltar = false }) {
   const { indice, etapa, voltar: irAtras } = useQuiz();
   const mostrarVoltar = voltar && indice > 0;
 

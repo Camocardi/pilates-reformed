@@ -36,19 +36,23 @@ export default function PerguntaStep() {
   return (
     <>
       <Topo />
-      <Titulo alinhar={etapa.alinhar}>{etapa.titulo}</Titulo>
-      {etapa.subtitulo && <Subtitulo alinhar={etapa.alinhar}>{etapa.subtitulo}</Subtitulo>}
+      {/* Pergunta, opções e botão formam um bloco só, centralizado na altura
+          da tela — no celular é o que a referência faz. Colado no topo, sobra
+          meia tela vazia embaixo e a pergunta parece incompleta. */}
+      <div className="centro">
+        <Titulo alinhar={etapa.alinhar}>{etapa.titulo}</Titulo>
+        {etapa.subtitulo && <Subtitulo alinhar={etapa.alinhar}>{etapa.subtitulo}</Subtitulo>}
 
-      <Opcoes etapa={etapa} valor={valor} onEscolher={escolherUnica} onAlternar={alternarMulti} />
+        <Opcoes etapa={etapa} valor={valor} onEscolher={escolherUnica} onAlternar={alternarMulti} />
 
-      {multi && (
-        <>
-          <div className="espaco" />
-          <Botao onClick={avancar} disabled={!valor || valor.length === 0}>
-            {etapa.botao || "Continuar"}
-          </Botao>
-        </>
-      )}
+        {multi && (
+          <div style={{ marginTop: 20 }}>
+            <Botao onClick={avancar} disabled={!valor || valor.length === 0}>
+              {etapa.botao || "Continuar"}
+            </Botao>
+          </div>
+        )}
+      </div>
     </>
   );
 }

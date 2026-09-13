@@ -70,6 +70,10 @@ body { overflow-x: hidden; }
 
 .espaco { flex: 1; min-height: 20px; }
 
+/* bloco centralizado na altura (telas de pergunta). O padding embaixo puxa o
+   conjunto um pouco acima do meio exato, que é onde o olho procura primeiro */
+.centro { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-bottom: 7vh; }
+
 /* Topo: só a barra, encaixada na coluna com respiro. */
 .topo { padding: 18px 0 6px; }
 
@@ -96,10 +100,14 @@ body { overflow-x: hidden; }
    misturada com caixa alta é mais um sinal de layout montado no automático.
    ===================================================================== */
 .titulo {
-  font-size: 21px; line-height: 1.3; font-weight: 800;
-  letter-spacing: -0.02em; margin: 0 0 10px; text-align: center;
+  font-size: 22px; line-height: 1.28; font-weight: 800;
+  letter-spacing: -0.02em; margin: 0 0 18px; text-align: center;
+  /* distribui as palavras entre as linhas: evita a última palavra sozinha
+     ("...gostaria de / ter?") */
+  text-wrap: balance;
 }
 .titulo-esq { text-align: left; }
+.titulo-grande { font-size: 23px; line-height: 1.25; margin-bottom: 8px; }
 .subtitulo { font-size: 14px; line-height: 1.5; color: var(--texto-suave); margin: 0 0 18px; text-align: center; }
 .subtitulo-esq { text-align: left; }
 
@@ -139,15 +147,17 @@ body { overflow-x: hidden; }
    Opções
    ===================================================================== */
 .opcoes { display: flex; flex-direction: column; gap: 9px; }
-.opcoes-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+/* linhas de mesma altura: sem isso, um rótulo que quebra em 3 linhas deixa
+   só a linha dele mais alta e a grade fica torta */
+.opcoes-grid2 { display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 9px; }
 .opcoes-grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
 
 .opcao {
   position: relative; display: flex; align-items: center; gap: 11px;
-  width: 100%; padding: 14px 15px;
-  border: 1.5px solid var(--linha); border-radius: var(--raio);
-  background: var(--card); box-shadow: var(--sombra-card);
-  font-family: inherit; font-size: 14.5px; font-weight: 500;
+  width: 100%; padding: 16px 16px;
+  border: 1px solid #E1E1E8; border-radius: var(--raio);
+  background: transparent;
+  font-family: inherit; font-size: 15px; font-weight: 400;
   color: var(--texto); text-align: left; cursor: pointer; overflow: hidden;
   transition: border-color 0.15s, background 0.15s, transform 0.12s;
   animation: sobe 0.3s ease both;
@@ -160,15 +170,15 @@ body { overflow-x: hidden; }
 .opcao.marcada { border-color: var(--cor-600); background: var(--cor-50); }
 
 .opcao-marca {
-  flex-shrink: 0; width: 21px; height: 21px; border-radius: 50%;
-  border: 2px solid #D4D4DC; display: grid; place-items: center;
+  flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+  border: 1.5px solid #D6D6DE; display: grid; place-items: center;
   transition: border-color 0.15s, background 0.15s;
 }
 .opcao.marcada .opcao-marca { border-color: var(--cor-600); background: var(--cor-600); }
 .opcao-marca svg { width: 11px; height: 11px; opacity: 0; }
 .opcao.marcada .opcao-marca svg { opacity: 1; }
 
-.opcao-emoji { font-size: 23px; flex-shrink: 0; line-height: 1; }
+.opcao-emoji { font-size: 28px; flex-shrink: 0; line-height: 1; }
 .opcao-texto { flex: 1; line-height: 1.38; }
 .opcao-texto b { font-weight: 700; }
 .opcao-texto u { text-decoration-color: var(--cor-400); text-underline-offset: 2px; }
@@ -188,24 +198,24 @@ body { overflow-x: hidden; }
 
 /* Opção com miniatura à direita (classificação do corpo) */
 .opcao-thumb { padding: 0 0 0 15px; gap: 8px; }
-.opcao-thumb .opcao-texto { padding: 13px 0; font-size: 14px; }
-.opcao-thumb .thumb { flex-shrink: 0; width: 64px; align-self: stretch; background: var(--cor-50); overflow: hidden; }
+.opcao-thumb .opcao-texto { padding: 12px 0; font-size: 14px; line-height: 1.3; }
+.opcao-thumb .thumb { flex-shrink: 0; width: 58px; align-self: stretch; background: var(--cor-50); overflow: hidden; }
 .opcao-thumb .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 /* Cartão vertical com imagem em cima (corpo desejado) */
 .opcao-img { flex-direction: column; gap: 0; padding: 0; align-items: stretch; }
-.opcao-img .moldura { aspect-ratio: 3/4; background: var(--cor-50); overflow: hidden; }
+.opcao-img .moldura { aspect-ratio: 1/1; background: var(--cor-50); overflow: hidden; }
 .opcao-img .moldura img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.opcao-img .rodape { display: flex; align-items: center; gap: 7px; padding: 10px 9px; }
-.opcao-img .rodape .opcao-texto { font-size: 12.5px; font-weight: 600; line-height: 1.25; }
-.opcao-img .rodape .opcao-marca { width: 17px; height: 17px; }
+.opcao-img .rodape { display: flex; align-items: center; gap: 9px; padding: 16px 10px; flex: 1; }
+.opcao-img .rodape .opcao-texto { font-size: 14.5px; font-weight: 400; line-height: 1.3; }
+.opcao-img .rodape .opcao-marca { width: 22px; height: 22px; }
 .opcao-img .rodape .opcao-marca svg { width: 9px; height: 9px; }
 
 /* =====================================================================
    Botões — cor chapada, sem brilho e sem pulsar.
    ===================================================================== */
 .botao {
-  width: 100%; padding: 17px 20px; border: none; border-radius: 99px;
+  width: 100%; padding: 17px 20px; border: none; border-radius: 14px;
   background: var(--cor-600); color: #fff; font-family: inherit;
   font-size: 14.5px; font-weight: 700; letter-spacing: 0.02em;
   text-transform: uppercase; cursor: pointer;
@@ -216,7 +226,7 @@ body { overflow-x: hidden; }
 
 .botao-linha {
   width: 100%; padding: 15px 20px; border: 1.5px solid var(--cor-200);
-  border-radius: 99px; background: transparent; color: var(--cor-700);
+  border-radius: 14px; background: transparent; color: var(--cor-700);
   font-family: inherit; font-size: 14.5px; font-weight: 600; cursor: pointer;
   transition: background 0.15s, transform 0.12s;
 }
@@ -266,30 +276,42 @@ body { overflow-x: hidden; }
 .fato { font-size: 14px; line-height: 1.6; padding: 11px 0; border-bottom: 1px solid var(--linha); }
 .fato:last-of-type { border-bottom: none; }
 
-.nota { font-size: 12.5px; line-height: 1.5; color: var(--texto-suave); text-align: center; margin: 12px 0 0; }
+.nota { font-size: 12.5px; line-height: 1.5; color: var(--texto); text-align: center; margin: 12px 0 0; }
 .nota-privacidade { font-size: 11.5px; line-height: 1.5; color: var(--texto-fraco); text-align: center; margin: 13px 0 0; }
 
 /* =====================================================================
    Carrossel
    ===================================================================== */
 .carrossel {
-  display: flex; gap: 10px; overflow-x: auto;
+  display: flex; column-gap: 10px; overflow-x: auto;
   scroll-snap-type: x mandatory; scrollbar-width: none;
-  margin: 0 -18px 10px; padding: 4px 18px;
+  margin: 4px -18px 14px; padding: 0 18px;
+  scroll-padding: 0 18px;
 }
 .carrossel::-webkit-scrollbar { display: none; }
+/* slide largo e centralizado: sobra só uma fatia dos vizinhos dos dois lados */
 .carrossel-item {
-  flex: 0 0 82%; scroll-snap-align: center;
-  border-radius: var(--raio-g); overflow: hidden;
-  background: var(--card); border: 1px solid var(--linha); box-shadow: var(--sombra-card);
+  flex: 0 0 88%; scroll-snap-align: center;
+  border-radius: 14px; overflow: hidden;
+  background: var(--card); border: 1px solid var(--linha);
 }
 .carrossel-item .foto { background: var(--cor-50); }
 .carrossel-item .foto img { width: 100%; display: block; }
-.carrossel-item .legenda { padding: 10px 14px; font-size: 13px; font-weight: 600; text-align: center; color: var(--texto-suave); }
+.carrossel-item .legenda { padding: 14px; font-size: 16px; font-weight: 500; text-align: center; color: var(--texto-suave); }
 
-.pontos { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
-.pontos span { width: 6px; height: 6px; border-radius: 50%; background: var(--cor-200); transition: background 0.2s, width 0.2s; }
-.pontos span.on { width: 18px; border-radius: 99px; background: var(--cor-600); }
+.pontos { display: flex; justify-content: center; align-items: center; gap: 7px; margin-bottom: 4px; }
+.pontos button {
+  width: 6px; height: 6px; padding: 0; border: 0; border-radius: 50%;
+  background: var(--cor-200); cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.pontos button.on { background: var(--cor-600); transform: scale(1.35); }
+
+/* mão de "arrastar" só onde existe mouse — no celular não faz sentido */
+@media (hover: hover) and (pointer: fine) {
+  .carrossel { cursor: grab; user-select: none; }
+  .carrossel.arrastando { cursor: grabbing; }
+}
 
 /* =====================================================================
    Loading — vai de 0 a 100%.
