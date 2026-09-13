@@ -4,7 +4,13 @@ import { ETAPAS } from "../data/etapas.jsx";
 const QuizContext = createContext(null);
 
 export function QuizProvider({ children }) {
-  const [indice, setIndice] = useState(0);
+  // Só em desenvolvimento: ?etapa=23 abre direto numa etapa, pra testar uma
+  // tela sem responder o quiz inteiro. Em produção o parâmetro é ignorado.
+  const [indice, setIndice] = useState(() => {
+    if (!import.meta.env.DEV) return 0;
+    const n = Number(new URLSearchParams(window.location.search).get("etapa"));
+    return Number.isInteger(n) && n >= 0 && n < ETAPAS.length ? n : 0;
+  });
   const [respostas, setRespostas] = useState({});
   const [dados, setDados] = useState({ fotoUrl: null, resultado: null });
 

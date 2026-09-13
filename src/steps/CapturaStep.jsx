@@ -1,16 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Topo, Titulo, TituloForte, Subtitulo, Botao, BotaoLinha, BotaoTexto } from "../components/Base.jsx";
-import Silhueta from "../components/Silhueta.jsx";
+import ScannerCorpo from "../components/ScannerCorpo.jsx";
 import { useQuiz } from "../state/QuizContext.jsx";
 import { warmupBodyDetector } from "../lib/poseDetection.js";
 import { arquivoParaDataUrl } from "../lib/bodyDrawing.js";
-
-const MARCADORES = [
-  { texto: "Queixo", emoji: "💫", estilo: { top: "6%", right: -18 } },
-  { texto: "Braço", emoji: "💪", estilo: { top: "28%", left: -26 } },
-  { texto: "Cintura", emoji: "📏", estilo: { top: "46%", right: -30 } },
-  { texto: "Abdômen", emoji: "🎯", estilo: { top: "62%", left: -34 } },
-];
 
 export default function CapturaStep() {
   const { etapa, definir, avancar } = useQuiz();
@@ -111,15 +104,7 @@ export default function CapturaStep() {
       <TituloForte>{etapa.tituloForte}</TituloForte>
       <Subtitulo>{etapa.subtitulo}</Subtitulo>
 
-      <div style={{ position: "relative", width: 200, margin: "10px auto 6px" }}>
-        <Silhueta />
-        {MARCADORES.map((m, i) => (
-          <div key={m.texto} className="marcador" style={{ ...m.estilo, animationDelay: `${0.2 + i * 0.12}s` }}>
-            <span>{m.emoji}</span>
-            <span>{m.texto}</span>
-          </div>
-        ))}
-      </div>
+      <ScannerCorpo />
 
       <p className="nota-privacidade">
         A análise roda <strong>dentro do seu celular</strong>. A foto não é enviada para nenhum servidor e não fica

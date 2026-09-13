@@ -322,17 +322,7 @@ body { overflow-x: hidden; }
 /* =====================================================================
    Captura e scan
    ===================================================================== */
-.silhueta { width: 186px; margin: 6px auto 2px; display: block; }
-.silhueta .pisca { animation: tracado 3s ease-in-out infinite; }
-@keyframes tracado { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-.marcador {
-  position: absolute; display: flex; align-items: center; gap: 5px;
-  padding: 5px 10px; border-radius: 99px;
-  background: #fff; border: 1px solid var(--linha);
-  box-shadow: var(--sombra-card); font-size: 11px; font-weight: 600;
-  color: var(--cor-800); white-space: nowrap;
-}
 .entrada-oculta { display: none; }
 
 .camera-caixa {
@@ -460,3 +450,92 @@ body { overflow-x: hidden; }
 
 .bio { font-size: 13.5px; line-height: 1.6; color: var(--texto-suave); margin: 0 0 12px; }
 .bio b { color: var(--texto); font-weight: 700; }
+
+/* =====================================================================
+   Scanner da tela de captura
+   Uma "tela" escura dentro do funil claro: antecipa o visual do scan de
+   verdade, que também é escuro, então a passagem de uma etapa pra outra
+   parece o mesmo aparelho ligando.
+   ===================================================================== */
+.scanner { position: relative; width: 260px; height: 310px; margin: 12px auto 8px; }
+.scanner-tela {
+  position: absolute; inset: 0; border-radius: 26px;
+  background: var(--cor-900); overflow: hidden;
+}
+.scanner-grade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scanner-corpo { position: absolute; left: 12%; top: 5%; width: 76%; height: 82%; overflow: visible; }
+
+/* o contorno se desenha uma vez, na entrada, e fica */
+.scanner-traco {
+  fill: none; stroke: var(--cor-200); stroke-width: 1.6;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: var(--len, 900); stroke-dashoffset: var(--len, 900);
+  animation: desenha 1.8s ease forwards;
+}
+
+/* as fitas de medição redesenham em loop, uma depois da outra */
+.scanner-medida {
+  fill: none; stroke: #fff; stroke-width: 2.2; stroke-linecap: round; opacity: 0;
+  stroke-dasharray: var(--len, 60) var(--len, 60); stroke-dashoffset: var(--len, 60);
+  animation: medidaLoop 4.8s ease-in-out infinite;
+}
+@keyframes medidaLoop {
+  0%   { stroke-dashoffset: var(--len, 60); opacity: 1; }
+  18%  { stroke-dashoffset: 0; opacity: 1; }
+  76%  { stroke-dashoffset: 0; opacity: 1; }
+  90%  { stroke-dashoffset: 0; opacity: 0; }
+  100% { stroke-dashoffset: var(--len, 60); opacity: 0; }
+}
+
+/* pontos do contorno acendem em sequência e apagam, no ritmo das fitas */
+.scanner-ponto {
+  fill: var(--cor-400); opacity: 0;
+  transform-box: fill-box; transform-origin: center;
+  animation: pontoPulso 4.8s ease-in-out infinite;
+}
+@keyframes pontoPulso {
+  0%       { opacity: 0; transform: scale(0.4); }
+  10%      { opacity: 1; transform: scale(1); }
+  70%      { opacity: 1; transform: scale(1); }
+  85%,100% { opacity: 0; transform: scale(0.4); }
+}
+
+.cantoneira { position: absolute; width: 24px; height: 24px; border: 3px solid var(--cor-400); }
+.cantoneira.ce { top: 14px; left: 14px; border-right: 0; border-bottom: 0; border-top-left-radius: 9px; }
+.cantoneira.cd { top: 14px; right: 14px; border-left: 0; border-bottom: 0; border-top-right-radius: 9px; }
+.cantoneira.be { bottom: 14px; left: 14px; border-right: 0; border-top: 0; border-bottom-left-radius: 9px; }
+.cantoneira.bd { bottom: 14px; right: 14px; border-left: 0; border-top: 0; border-bottom-right-radius: 9px; }
+
+/* feixe: linha chapada com brilho em box-shadow, sem degradê */
+.scanner-feixe {
+  position: absolute; left: 10%; right: 10%; height: 2px; border-radius: 2px;
+  background: var(--cor-400);
+  box-shadow: 0 0 14px 3px rgba(167, 139, 250, 0.55);
+  animation: feixeVai 2.6s ease-in-out infinite alternate;
+}
+@keyframes feixeVai { from { top: 9%; } to { top: 86%; } }
+
+.scanner-status {
+  position: absolute; left: 0; right: 0; bottom: 14px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--cor-200);
+}
+.scanner-status i { width: 6px; height: 6px; border-radius: 50%; background: #4ADE80; animation: pisca 1.2s ease-in-out infinite; }
+@keyframes pisca { 50% { opacity: 0.25; } }
+
+/* etiquetas: entram uma vez e depois flutuam. A flutuação usa `translate`
+   e a entrada usa `transform`, então as duas animações não brigam */
+.scanner-etiqueta {
+  position: absolute; z-index: 5;
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 11px; border-radius: 99px;
+  background: #fff; color: var(--cor-800);
+  font-size: 11.5px; font-weight: 700; white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(23, 23, 28, 0.18);
+  opacity: 0;
+  animation: etiquetaEntra 0.45s ease forwards, flutua 3.2s ease-in-out infinite;
+}
+.scanner-etiqueta::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--cor-600); }
+@keyframes etiquetaEntra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes flutua { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
