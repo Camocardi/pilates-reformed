@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ETAPAS } from "../data/etapas.jsx";
+import { marcaEtapa } from "../lib/clarity.js";
 
 const QuizContext = createContext(null);
 
@@ -43,6 +44,12 @@ export function QuizProvider({ children }) {
   }, []);
 
   const etapa = ETAPAS[indice];
+
+  // uma marcação por tela, inclusive a primeira — é o que permite ver no
+  // Clarity quantas chegaram em cada etapa e onde pararam
+  useEffect(() => {
+    marcaEtapa(indice, etapa);
+  }, [indice, etapa]);
 
   const valor = useMemo(
     () => ({ indice, etapa, total: ETAPAS.length, respostas, dados, avancar, voltar, responder, alternar, definir }),

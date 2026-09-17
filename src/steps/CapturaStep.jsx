@@ -4,6 +4,7 @@ import ScannerCorpo from "../components/ScannerCorpo.jsx";
 import { useQuiz } from "../state/QuizContext.jsx";
 import { warmupBodyDetector } from "../lib/poseDetection.js";
 import { arquivoParaDataUrl } from "../lib/bodyDrawing.js";
+import { marcaEvento } from "../lib/clarity.js";
 
 export default function CapturaStep() {
   const { etapa, definir, avancar } = useQuiz();
@@ -58,18 +59,21 @@ export default function CapturaStep() {
     canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
     pararCamera();
     definir({ fotoUrl: canvas.toDataURL("image/jpeg", 0.92) });
+    marcaEvento("foto_camera");
     avancar();
   }
 
   async function usarArquivo(file) {
     if (!file) return;
     definir({ fotoUrl: await arquivoParaDataUrl(file) });
+    marcaEvento("foto_galeria");
     avancar();
   }
 
   /** Sem foto o funil não trava: segue com o traçado genérico. */
   function pular() {
     definir({ fotoUrl: null });
+    marcaEvento("foto_pulada");
     avancar();
   }
 

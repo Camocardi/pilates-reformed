@@ -2,6 +2,7 @@ import { Botao, Tique, TituloForte } from "../components/Base.jsx";
 import { useQuiz } from "../state/QuizContext.jsx";
 import { montaAchados, COR_ACHADO } from "../lib/achados.js";
 import { VENDAS } from "../data/vendas.jsx";
+import { marcaEvento } from "../lib/clarity.js";
 
 function Estrelas() {
   return <span className="estrelas">★★★★★</span>;
@@ -28,6 +29,7 @@ function Cta() {
   return (
     <Botao
       onClick={() => {
+        marcaEvento("checkout_clique");
         window.location.href = VENDAS.checkout;
       }}
     >
