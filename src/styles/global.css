@@ -39,6 +39,9 @@
   --raio: 14px;
   --raio-g: 20px;
   --largura: 440px;
+
+  /* Títulos em Montserrat, como a referência; o corpo do texto segue em Inter */
+  --fonte-titulo: Montserrat, Inter, system-ui, sans-serif;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -100,6 +103,7 @@ body { overflow-x: hidden; }
    misturada com caixa alta é mais um sinal de layout montado no automático.
    ===================================================================== */
 .titulo {
+  font-family: var(--fonte-titulo);
   font-size: 22px; line-height: 1.28; font-weight: 800;
   letter-spacing: -0.02em; margin: 0 0 18px; text-align: center;
   /* distribui as palavras entre as linhas: evita a última palavra sozinha
@@ -112,6 +116,7 @@ body { overflow-x: hidden; }
 .subtitulo-esq { text-align: left; }
 
 .titulo-forte {
+  font-family: var(--fonte-titulo);
   font-size: 19px; line-height: 1.28; font-weight: 800;
   letter-spacing: -0.01em; text-align: center; text-transform: uppercase;
   color: var(--cor-700); margin: 0 0 8px;
@@ -188,8 +193,8 @@ body { overflow-x: hidden; }
   background: var(--cor-600);
   border-color: var(--cor-600);
   color: #fff;
-  font-weight: 600; font-size: 15px;
-  padding: 16px 17px;
+  font-weight: 500; font-size: 16px;
+  padding: 18px 16px;
 }
 .opcao-cheia .opcao-marca { border-color: rgba(255,255,255,0.65); }
 .opcao-cheia.marcada { background: var(--cor-700); border-color: var(--cor-700); }
@@ -405,6 +410,7 @@ body { overflow-x: hidden; }
    Página de vendas
    ===================================================================== */
 .secao {
+  font-family: var(--fonte-titulo);
   font-size: 17px; font-weight: 800; letter-spacing: -0.01em;
   color: var(--cor-700); text-align: center;
   margin: 30px 0 14px;
@@ -561,3 +567,44 @@ body { overflow-x: hidden; }
 .scanner-etiqueta::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--cor-600); }
 @keyframes etiquetaEntra { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes flutua { 0%, 100% { translate: 0 0; } 50% { translate: 0 -4px; } }
+
+/* =====================================================================
+   Capa (primeira tela)
+   ===================================================================== */
+.hook { padding: 42px 0 8px; }
+
+.hook-titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 25px; line-height: 1.2; font-weight: 900;
+  text-transform: uppercase; text-align: center;
+  color: var(--texto); margin: 0 0 14px;
+  text-wrap: balance;
+}
+.hook-cor { color: var(--cor-600); }
+
+/* marca-texto por trás do texto preto, quebrando junto com a linha */
+.hook-destaque {
+  text-align: center; margin: 0 0 26px;
+  font-size: 15px; font-weight: 800; line-height: 1.55; color: var(--texto);
+}
+.hook-marca {
+  background: var(--cor-200);
+  padding: 1px 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.hook-imagem { margin: 0 14px 26px; border-radius: 16px; overflow: hidden; background: var(--cor-50); }
+.hook-imagem img { width: 100%; display: block; }
+
+.hook-pergunta { font-size: 24px; margin-bottom: 10px; }
+
+.hook-aviso {
+  margin: 18px 16px 0; padding: 14px 16px;
+  background: var(--cor-50); border: 1px solid var(--cor-200); border-radius: 14px;
+  font-size: 13px; font-weight: 700; line-height: 1.45; text-align: center; color: var(--texto);
+}
+.hook-tempo {
+  text-align: center; margin: 18px 0 0;
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.03em; color: var(--texto-fraco);
+}

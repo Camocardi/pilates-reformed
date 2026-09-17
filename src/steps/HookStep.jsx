@@ -1,11 +1,10 @@
-import { Titulo, Subtitulo } from "../components/Base.jsx";
 import Opcoes from "../components/Opcoes.jsx";
 import { useQuiz } from "../state/QuizContext.jsx";
 
 /**
- * Primeira tela. Sem barra de progresso e sem botão de voltar: o
- * compromisso ainda não começou, e mostrar "1 de 26" aqui só informa quanto
- * trabalho ela ainda vai ter pela frente.
+ * Primeira tela, no layout da capa de referência. Sem barra de progresso e
+ * sem voltar: o compromisso ainda não começou, e mostrar "1 de 26" aqui só
+ * informa quanto trabalho ainda falta.
  */
 export default function HookStep() {
   const { etapa, respostas, responder, avancar } = useQuiz();
@@ -16,34 +15,28 @@ export default function HookStep() {
   }
 
   return (
-    <>
-      <div style={{ height: 30 }} />
-
-      <h1 className="titulo-forte" style={{ fontSize: 22, marginBottom: 10 }}>
-        {etapa.linha1}
-        <span style={{ display: "block", color: "var(--texto)" }}>{etapa.linha2}</span>
+    <div className="hook">
+      {/* as duas cores correm na MESMA frase, quebrando onde a largura mandar —
+          em blocos separados a manchete perde o ritmo de uma frase só */}
+      <h1 className="hook-titulo">
+        <span className="hook-cor">{etapa.linha1}</span> {etapa.linha2}
       </h1>
-      <p style={{ textAlign: "center", margin: "0 0 16px" }}>
-        <span className="marca-forte" style={{ fontSize: 12, fontWeight: 700, letterSpacing: "0.03em" }}>
-          {etapa.destaque}
-        </span>
+
+      <p className="hook-destaque">
+        <span className="hook-marca">{etapa.destaque}</span>
       </p>
 
-      <div className="imagem-bloco">
+      <div className="hook-imagem">
         <img src={etapa.imagem} alt="Antes e depois" />
       </div>
 
-      <Titulo alinhar="esq">{etapa.pergunta}</Titulo>
-      <Subtitulo alinhar="esq">{etapa.subtitulo}</Subtitulo>
+      <h2 className="titulo hook-pergunta">{etapa.pergunta}</h2>
+      <p className="subtitulo">{etapa.subtitulo}</p>
 
       <Opcoes etapa={etapa} valor={respostas[etapa.campo]} onEscolher={escolher} onAlternar={() => {}} />
 
-      <div className="aviso aviso-roxo" style={{ marginTop: 18 }}>
-        {etapa.rodape.aviso}
-      </div>
-      <p className="nota-privacidade" style={{ margin: 0, fontWeight: 600, letterSpacing: "0.04em" }}>
-        ✅ {etapa.rodape.tempo}
-      </p>
-    </>
+      <div className="hook-aviso">{etapa.rodape.aviso}</div>
+      <p className="hook-tempo">✅ {etapa.rodape.tempo}</p>
+    </div>
   );
 }
