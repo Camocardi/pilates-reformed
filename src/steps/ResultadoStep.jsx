@@ -25,17 +25,26 @@ function Preco() {
   );
 }
 
-function Cta() {
-  return (
-    <Botao
-      onClick={() => {
-        marcaEvento("checkout_clique");
-        window.location.href = VENDAS.checkout;
-      }}
-    >
-      {VENDAS.cta}
-    </Botao>
-  );
+/**
+ * Botão de ação.
+ *
+ * O PRIMEIRO da página não manda pro checkout: rola até o bloco da oferta.
+ * Quem acabou de ver a leitura ainda não viu preço, depoimento nem o que
+ * recebe — jogar direto pro pagamento nesse ponto queima o argumento. Os
+ * demais botões, que já vêm depois da oferta, vão direto pro checkout.
+ */
+function Cta({ paraOferta = false }) {
+  function clique() {
+    if (paraOferta) {
+      marcaEvento("cta_ver_oferta");
+      document.getElementById("oferta")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
+    marcaEvento("checkout_clique");
+    window.location.href = VENDAS.checkout;
+  }
+
+  return <Botao onClick={clique}>{VENDAS.cta}</Botao>;
 }
 
 /**
@@ -86,7 +95,7 @@ export default function ResultadoStep() {
       </TituloForte>
 
       <div style={{ marginTop: 18 }}>
-        <Cta />
+        <Cta paraOferta />
       </div>
 
       {/* ── Depoimentos ────────────────────────────────────────── */}
@@ -103,7 +112,7 @@ export default function ResultadoStep() {
         </div>
       ))}
 
-      <div style={{ marginTop: 18 }}>
+      <div id="oferta" className="ancora-oferta" style={{ marginTop: 18 }}>
         <Preco />
         <Cta />
       </div>

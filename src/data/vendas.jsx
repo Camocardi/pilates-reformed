@@ -10,7 +10,7 @@ import { IMG } from "./imagens.js";
  */
 
 export const VENDAS = {
-  checkout: "#", // ← URL do checkout
+  checkout: "https://pay.kirvano.com/e837e1aa-4e85-480b-ac94-099532199110",
 
   chamada: "SEU RESULTADO ESTÁ LIBERADO",
   chamadaDestaque: "GARANTA SUA VAGA NO DESAFIO",
