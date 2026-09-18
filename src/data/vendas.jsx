@@ -20,8 +20,8 @@ export const VENDAS = {
   precos: {
     faixa: "ÚLTIMAS VAGAS OFERTA",
     de: "DE R$97,00",
-    desconto: "60%OFF",
-    por: "R$29,90",
+    desconto: "72%OFF",
+    por: "R$27,00",
     condicao: "à vista",
   },
 
