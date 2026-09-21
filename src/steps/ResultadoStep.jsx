@@ -1,8 +1,9 @@
 import { Botao, Tique, TituloForte } from "../components/Base.jsx";
 import { useQuiz } from "../state/QuizContext.jsx";
 import { montaAchados, COR_ACHADO } from "../lib/achados.js";
-import { VENDAS } from "../data/vendas.jsx";
+import { VENDAS, VALOR, MOEDA } from "../data/vendas.jsx";
 import { marcaEvento } from "../lib/clarity.js";
+import { dispara } from "../lib/fbEvents.js";
 
 function Estrelas() {
   return <span className="estrelas">★★★★★</span>;
@@ -41,6 +42,18 @@ function Cta({ paraOferta = false }) {
       return;
     }
     marcaEvento("checkout_clique");
+
+    // O InitiateCheckout sai ANTES da navegação. Ele sobrevive a ela porque o
+    // `dispara` usa keepalive — sem isso o navegador cancelaria a requisição
+    // ao sair da página, e justamente o evento mais valioso do funil se
+    // perderia. Por isso também nada de await aqui: a ida pra Kirvano é
+    // imediata, e o evento se vira sozinho.
+    dispara("InitiateCheckout", {
+      value: VALOR,
+      currency: MOEDA,
+      content_name: "Protocolo Pilates",
+    });
+
     window.location.href = VENDAS.checkout;
   }
 

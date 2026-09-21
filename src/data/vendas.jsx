@@ -82,3 +82,15 @@ export const VENDAS = {
     </>,
   ],
 };
+
+
+/**
+ * O preço como número, pros eventos da Meta (`value`).
+ *
+ * Sai do próprio texto da oferta de propósito: o preço já mudou uma vez, e um
+ * segundo lugar pra atualizar é um segundo lugar pra esquecer — aí o anúncio
+ * passa a otimizar por um valor que não existe mais.
+ */
+export const VALOR = Number(VENDAS.precos.por.replace(/[^\d,]/g, "").replace(",", "."));
+
+export const MOEDA = "BRL";

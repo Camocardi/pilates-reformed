@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { ETAPAS } from "../data/etapas.jsx";
+import { VALOR, MOEDA } from "../data/vendas.jsx";
 import { marcaEtapa } from "../lib/clarity.js";
+import { disparaUmaVez, pageViewServidor } from "../lib/fbEvents.js";
 
 const QuizContext = createContext(null);
 
@@ -49,6 +51,33 @@ export function QuizProvider({ children }) {
   // Clarity quantas chegaram em cada etapa e onde pararam
   useEffect(() => {
     marcaEtapa(indice, etapa);
+  }, [indice, etapa]);
+
+  // Os eventos que a Meta usa pra otimizar o anúncio. São poucos de propósito:
+  // evento demais dilui o sinal, e o que a campanha precisa saber é quem abriu,
+  // quem se comprometeu e quem chegou na oferta.
+  //
+  // Todos passam pelo `disparaUmaVez` porque este efeito roda a cada troca de
+  // tela — e "abriu" e "começou" acontecem uma vez só na vida da visita.
+  useEffect(() => {
+    pageViewServidor();
+
+    if (indice === 0) {
+      // ainda na capa: a pessoa chegou, mas não fez nada
+      disparaUmaVez("quiz-aberto", "ViewContent", { content_name: "Quiz Pilates" });
+    } else {
+      // saiu da capa, ou seja: respondeu a primeira pergunta. É o primeiro
+      // gesto de intenção do funil, e é isso que vale marcar como Lead.
+      disparaUmaVez("quiz-iniciado", "Lead", { content_name: "Quiz iniciado" });
+    }
+
+    if (etapa.id === "resultado") {
+      disparaUmaVez("oferta-vista", "ViewContent", {
+        content_name: "Oferta Protocolo Pilates",
+        value: VALOR,
+        currency: MOEDA,
+      });
+    }
   }, [indice, etapa]);
 
   const valor = useMemo(

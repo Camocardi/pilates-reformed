@@ -20,7 +20,13 @@
       s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
       fbq('init', '2822134581499321');
-      fbq('track', 'PageView');
+      // O id do evento fica guardado na window pra que o React, assim que
+      // subir, mande a cópia deste MESMO PageView pela API de Conversões. Com
+      // o id igual nos dois lados, a Meta conta uma conversão só.
+      // O PageView tem de sair daqui, e não do React: quem fecha a página nos
+      // primeiros segundos só é contada se o disparo vier antes do bundle.
+      window.__fbPageViewId = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 11);
+      fbq('track', 'PageView', {}, { eventID: window.__fbPageViewId });
     </script>
     <!-- End Meta Pixel Code -->
 

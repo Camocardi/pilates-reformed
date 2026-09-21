@@ -54,8 +54,54 @@ Uma cor só, chapada, sem degradê. Os cinco tons ficam no topo de
 [`src/styles/global.css`](src/styles/global.css) — reescrever os cinco troca o
 funil inteiro (os valores do rosa estão comentados lá).
 
+## Medição
+
+Três coisas no `<head>` do [`index.html`](index.html): Meta Pixel, Utmify e Clarity.
+Duas delas têm código do lado do app.
+
+**Clarity** — [`lib/clarity.js`](src/lib/clarity.js). O funil é uma página só, a URL
+nunca muda; sem marcar a etapa, toda gravação cairia sob o mesmo endereço e não
+haveria como saber onde cada mulher parou.
+
+**Meta** — [`lib/fbEvents.js`](src/lib/fbEvents.js) + [`api/capi.js`](api/capi.js).
+Cada evento sai por dois caminhos ao mesmo tempo: o pixel do browser e a API de
+Conversões pelo servidor, ambos com o mesmo `event_id`. A Meta reconhece que é o
+mesmo acontecimento e conta uma conversão só — mas agora conta também o que o
+pixel sozinho perdia (bloqueador, iOS, aba fechada antes do script carregar).
+
+| evento | quando |
+|---|---|
+| `PageView` | no `<head>`, antes do React subir; o servidor manda a cópia depois |
+| `ViewContent` (Quiz Pilates) | a capa apareceu |
+| `Lead` | saiu da capa, ou seja, respondeu a primeira pergunta |
+| `ViewContent` (Oferta) | chegou na tela de resultado |
+| `InitiateCheckout` | clicou no botão que leva pra Kirvano |
+
+O `Purchase` **não sai daqui**: a compra acontece na Kirvano, e a página de
+obrigado pode nunca ser carregada. Ele tem que vir da integração nativa da
+Kirvano com a API de Conversões, ou de um webhook de compra aprovada.
+
+### Configuração
+
+`FB_CAPI_TOKEN` no painel da Vercel (Settings -> Environment Variables), e
+redeploy. Veja [`.env.example`](.env.example) pros outros valores. O token é
+segredo e só existe no servidor — nunca com prefixo `VITE_`.
+
+A rota `/api/capi` é uma serverless function da Vercel: qualquer arquivo em
+`api/` vira uma, sem configuração. `npm run dev` **não** serve essa rota (o Vite
+só serve o front); pra testar a rota localmente é `vercel dev`. Em `npm run dev`
+o pixel do browser funciona normal e a chamada ao servidor falha em silêncio.
+
+### Nota de correspondência
+
+O funil não pede e-mail nem WhatsApp em etapa nenhuma, e e-mail é de longe o
+campo que mais pesa na nota. O que vai hoje é `fbp`, `fbc`, IP, user-agent e um
+`external_id` anônimo guardado no navegador. Se algum dia uma etapa passar a
+coletar contato, é só passar `{ email, phone }` no terceiro argumento do
+`dispara()` — a rota já hasheia e envia.
+
 ## Pendências
 
-- `LINK_CHECKOUT` em [`steps/ResultadoStep.jsx`](src/steps/ResultadoStep.jsx) está como `#`.
-- Os pixels (Meta, Utmify, Clarity, TikTok) ainda não foram colocados no `<head>` do `index.html`.
+- O pixel do TikTok ainda não foi colocado no `<head>` do `index.html`.
+- `Purchase` depende da Kirvano (integração nativa ou webhook) — ver acima.
 - As legendas 2 e 3 do carrossel da etapa de prova social estão vazias.
