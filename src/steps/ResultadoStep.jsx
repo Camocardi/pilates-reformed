@@ -46,7 +46,7 @@ function Cta({ paraOferta = false }) {
     // O InitiateCheckout sai ANTES da navegação. Ele sobrevive a ela porque o
     // `dispara` usa keepalive — sem isso o navegador cancelaria a requisição
     // ao sair da página, e justamente o evento mais valioso do funil se
-    // perderia. Por isso também nada de await aqui: a ida pra Kirvano é
+    // perderia. Por isso também nada de await aqui: a ida pra LastLink é
     // imediata, e o evento se vira sozinho.
     dispara("InitiateCheckout", {
       value: VALOR,

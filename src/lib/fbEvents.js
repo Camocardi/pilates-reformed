@@ -86,7 +86,7 @@ export function dispara(nome, custom = {}, usuario = {}, idPronto) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       // Sem keepalive, o InitiateCheckout morre no meio: o clique manda a
-      // pessoa pra Kirvano e o navegador cancela toda requisição pendente da
+      // pessoa pra LastLink e o navegador cancela toda requisição pendente da
       // página que está saindo. Com ele, a requisição sobrevive à navegação.
       keepalive: true,
       body: JSON.stringify({

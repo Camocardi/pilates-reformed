@@ -75,11 +75,11 @@ pixel sozinho perdia (bloqueador, iOS, aba fechada antes do script carregar).
 | `ViewContent` (Quiz Pilates) | a capa apareceu |
 | `Lead` | saiu da capa, ou seja, respondeu a primeira pergunta |
 | `ViewContent` (Oferta) | chegou na tela de resultado |
-| `InitiateCheckout` | clicou no botão que leva pra Kirvano |
+| `InitiateCheckout` | clicou no botão que leva pra LastLink |
 
-O `Purchase` **não sai daqui**: a compra acontece na Kirvano, e a página de
+O `Purchase` **não sai daqui**: a compra acontece na LastLink, e a página de
 obrigado pode nunca ser carregada. Ele tem que vir da integração nativa da
-Kirvano com a API de Conversões, ou de um webhook de compra aprovada.
+LastLink com a API de Conversões, ou de um webhook de compra aprovada.
 
 ### Configuração
 
@@ -103,5 +103,5 @@ coletar contato, é só passar `{ email, phone }` no terceiro argumento do
 ## Pendências
 
 - O pixel do TikTok ainda não foi colocado no `<head>` do `index.html`.
-- `Purchase` depende da Kirvano (integração nativa ou webhook) — ver acima.
+- `Purchase` depende da LastLink (integração nativa ou webhook) — ver acima.
 - As legendas 2 e 3 do carrossel da etapa de prova social estão vazias.
