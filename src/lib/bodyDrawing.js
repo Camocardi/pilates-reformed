@@ -126,14 +126,23 @@ function pontosDosLandmarks(lm, mask) {
   // (t > 1) porque em muitos corpos a parte mais larga do abdômen fica
   // abaixo da linha dos landmarks de quadril.
   const amostras = [];
+  // O centro de cada varredura parte do MEIO DA LINHA ANTERIOR, não do eixo
+  // reto entre ombros e quadril. Numa foto com o corpo inclinado ou torcido, o
+  // eixo reto escapa do tronco no meio da barriga e a medição se perde.
+  let centroX = centroOmbros.x;
   for (let t = 0.42; t <= 1.08; t += 0.02) {
     const centro = lerpP(centroOmbros, centroQuadril, t);
-    const medido = larguraNaAltura(mask, centro.y, centro.x, W, H);
+    const medido = larguraNaAltura(mask, centro.y, amostras.length ? centroX : centro.x, W, H);
     if (!medido) continue;
     const larg = medido.x2 - medido.x1;
     // descarta leitura absurda: braço solto colado no tronco alarga demais,
     // e vazamento da máscara pro fundo alarga mais ainda
     if (larg < largQuadril * 0.6 || larg > largOmbros * 4) continue;
+    // e descarta salto brusco em relação à linha anterior: normalmente é o
+    // braço entrando na conta, não o corpo alargando de verdade
+    const anterior = amostras[amostras.length - 1];
+    if (anterior && Math.abs(larg - anterior.larg) > anterior.larg * 0.6) continue;
+    centroX = (medido.x1 + medido.x2) / 2;
     amostras.push({ t, y: centro.y, x1: medido.x1, x2: medido.x2, larg });
   }
 
@@ -252,6 +261,22 @@ function pontosDosLandmarks(lm, mask) {
       medidoNaSilhueta: naFaixaCintura.length >= 3,
     },
   };
+}
+
+/**
+ * O corpo está enquadrado o bastante para valer uma leitura?
+ *
+ * Foto de meio corpo, muito de lado ou com o tronco cortado ainda devolve os
+ * 33 pontos — só que chutados, com visibilidade baixa. Desenhar por cima disso
+ * dá uma marcação errada com ar de precisa, que é pior do que não marcar. Aqui
+ * o funil prefere cair na leitura genérica.
+ */
+const VISIBILIDADE_MINIMA = 0.5;
+
+function corpoConfiavel(lm) {
+  return [LM.OMBRO_E, LM.OMBRO_D, LM.QUADRIL_E, LM.QUADRIL_D].every(
+    (i) => (lm[i]?.visibility ?? 1) >= VISIBILIDADE_MINIMA,
+  );
 }
 
 /** Traçado genérico, em frações da tela, quando nenhum corpo foi detectado. */
@@ -375,7 +400,9 @@ export async function analisaCorpo(dataUrl) {
   try {
     const [bruto, silhueta] = await Promise.all([detectPose(base), segmentBody(base, W, H)]);
     mask = silhueta;
-    if (bruto) landmarks = bruto.map((p) => ({ ...p, x: p.x * W, y: p.y * H }));
+    if (bruto && corpoConfiavel(bruto)) {
+      landmarks = bruto.map((p) => ({ ...p, x: p.x * W, y: p.y * H }));
+    }
   } catch {
     landmarks = null;
   }

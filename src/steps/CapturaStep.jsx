@@ -7,7 +7,7 @@ import { arquivoParaDataUrl } from "../lib/bodyDrawing.js";
 import { marcaEvento } from "../lib/clarity.js";
 
 export default function CapturaStep() {
-  const { etapa, definir, avancar } = useQuiz();
+  const { etapa, indice, definir, avancar, irPara } = useQuiz();
   const [modo, setModo] = useState("inicio"); // inicio | camera
   const [erroCamera, setErroCamera] = useState("");
   const videoRef = useRef(null);
@@ -70,11 +70,17 @@ export default function CapturaStep() {
     avancar();
   }
 
-  /** Sem foto o funil não trava: segue com o traçado genérico. */
+  /**
+   * Sem foto não há o que ler: pula a tela do scan inteira.
+   *
+   * Antes ela ainda aparecia, com a área da imagem vazia e a barra correndo
+   * até 100% — parecia carregamento quebrado. O resultado continua saindo,
+   * montado a partir das respostas do quiz.
+   */
   function pular() {
     definir({ fotoUrl: null });
     marcaEvento("foto_pulada");
-    avancar();
+    irPara(indice + 2);
   }
 
   if (modo === "camera") {

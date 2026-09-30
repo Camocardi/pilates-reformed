@@ -22,6 +22,11 @@ export function QuizProvider({ children }) {
     window.scrollTo({ top: 0 });
   }, []);
 
+  const irPara = useCallback((n) => {
+    setIndice(Math.min(ETAPAS.length - 1, Math.max(0, n)));
+    window.scrollTo({ top: 0 });
+  }, []);
+
   const voltar = useCallback(() => {
     setIndice((i) => Math.max(0, i - 1));
     window.scrollTo({ top: 0 });
@@ -81,8 +86,8 @@ export function QuizProvider({ children }) {
   }, [indice, etapa]);
 
   const valor = useMemo(
-    () => ({ indice, etapa, total: ETAPAS.length, respostas, dados, avancar, voltar, responder, alternar, definir }),
-    [indice, etapa, respostas, dados, avancar, voltar, responder, alternar, definir],
+    () => ({ indice, etapa, total: ETAPAS.length, respostas, dados, avancar, voltar, irPara, responder, alternar, definir }),
+    [indice, etapa, respostas, dados, avancar, voltar, irPara, responder, alternar, definir],
   );
 
   return <QuizContext.Provider value={valor}>{children}</QuizContext.Provider>;
