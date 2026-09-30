@@ -365,12 +365,23 @@ body { overflow-x: hidden; }
 .scan-veu { position: absolute; inset: 0; background: rgba(46,16,101,0.34); pointer-events: none; }
 /* a faixa de luz do scanner é a única coisa que precisa de esmaecimento nas
    pontas pra parecer um feixe, e não uma barra deslizando */
+/* percorre a altura da moldura, não 100dvh, e devagar: com dvh o feixe
+   passava quase todo o tempo fora da área visível da foto */
 .scan-feixe {
-  position: absolute; left: 0; right: 0; height: 120px;
-  background: linear-gradient(180deg, transparent, rgba(167,139,250,0.4), transparent);
-  animation: varre 2.6s ease-in-out infinite; pointer-events: none;
+  position: absolute; left: 0; right: 0; height: 160px;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(167,139,250,0.18) 45%,
+    rgba(196,181,253,0.42) 82%,
+    rgba(221,214,254,0.12)
+  );
+  border-bottom: 2px solid rgba(221,214,254,0.9);
+  box-shadow: 0 2px 18px 2px rgba(167,139,250,0.45);
+  animation: varre 4.2s linear infinite;
+  pointer-events: none;
 }
-@keyframes varre { 0% { transform: translateY(-130px); } 100% { transform: translateY(100dvh); } }
+@keyframes varre { from { top: -160px; } to { top: 100%; } }
 .scan-painel { padding: 22px 24px calc(30px + env(safe-area-inset-bottom)); background: var(--cor-900); color: #fff; text-align: center; }
 .scan-pct { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin-bottom: 10px; }
 .scan-trilha { height: 6px; border-radius: 99px; background: rgba(255,255,255,0.16); overflow: hidden; }
